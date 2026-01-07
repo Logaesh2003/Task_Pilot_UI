@@ -1,0 +1,42 @@
+<div class="dashboard">
+
+  <section class="header">
+    <h1>Today’s Overview</h1>
+    <p class="subtitle">Here’s a quick snapshot of your tasks</p>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stat-card" *ngFor="let stat of stats">
+      <p class="stat-label">{{ stat.label }}</p>
+      <p class="stat-value">{{ stat.value }}</p>
+    </div>
+  </section>
+
+  <!-- Today's Tasks -->
+  <section class="today">
+    <h2>Today’s Focus</h2>
+
+    <div class="scroll">
+
+      <div class="task-list">
+        <div class="task-item" *ngFor="let task of todayTasks">
+          <span class="task-title">{{ task.title }}</span>
+          <span
+            class="priority"
+            [ngClass]="task.priority.toLowerCase()"
+          >
+            {{ task.priority }}
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    
+    <p class="empty" *ngIf="todayTasks.length === 0">
+      No tasks planned for today 🎉
+    </p>
+  </section>
+
+</div>

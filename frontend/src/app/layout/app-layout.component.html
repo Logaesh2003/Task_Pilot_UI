@@ -1,0 +1,16 @@
+<app-navbar (logout)="logout()"></app-navbar>
+
+<div class="app-shell">
+  <div class="layout">
+    <app-sidebar></app-sidebar>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- 🤖 AI gets full task context -->
+    <app-ai-panel></app-ai-panel>
+  </div>
+</div>
+
+

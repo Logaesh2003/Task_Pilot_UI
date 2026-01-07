@@ -1,0 +1,47 @@
+<div class="edit-task">
+
+  <header class="header">
+    <h1>Edit Task</h1>
+    <p class="subtitle">Update task details</p>
+  </header>
+
+  <form [formGroup]="taskForm" (ngSubmit)="submit()" class="form">
+
+    <div class="field">
+      <label>Task Title *</label>
+      <input type="text" formControlName="title" />
+      <small *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.invalid">
+        Task title is required
+      </small>
+    </div>
+
+    <div class="field">
+      <label>Description</label>
+      <textarea rows="3" formControlName="description"></textarea>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Due Date</label>
+        <input type="date" formControlName="dueDate" />
+      </div>
+
+      <div class="field">
+        <label>Priority</label>
+        <select formControlName="priority">
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="cancel" (click)="cancel()">Cancel</button>
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Updating...' : 'Update Task' }}
+      </button>
+    </div>
+
+  </form>
+</div>

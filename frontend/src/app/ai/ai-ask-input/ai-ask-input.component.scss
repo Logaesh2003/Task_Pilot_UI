@@ -1,0 +1,47 @@
+.ask-ai {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  margin-top: 20px;
+  margin-left: 10px;
+  margin-right:10px;
+  margin-bottom: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+
+
+.ask-ai input {
+  flex: 1;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid #c7d2fe;
+  font-size: 0.85rem;
+  outline: none;
+  background: #ffffff;
+}
+
+.ask-ai input::placeholder {
+  color: #94a3b8;
+}
+
+.ask-ai input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.ask-ai button {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ask-ai button:disabled {
+  background: #c7d2fe;
+  cursor: not-allowed;
+}

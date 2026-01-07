@@ -1,0 +1,7 @@
+fastapi
+sse_starlette
+uvicorn
+sqlmodel
+dotenv
+httpx
+requests

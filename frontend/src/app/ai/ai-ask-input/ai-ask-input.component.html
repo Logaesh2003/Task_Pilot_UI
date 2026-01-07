@@ -1,0 +1,18 @@
+<div class="ask-ai">
+
+  <input
+    type="text"
+    [(ngModel)]="prompt"
+    placeholder="Ask AI to plan, prioritize, or suggest…"
+    (keydown.enter)="submit()"
+    [disabled]="isLoading"
+  />
+
+  <button
+    (click)="submit()"
+    [disabled]="isLoading || !prompt.trim()"
+  >
+    {{ isLoading ? 'Thinking…' : 'Ask' }}
+  </button>
+
+</div>

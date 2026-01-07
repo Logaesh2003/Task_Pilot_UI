@@ -1,0 +1,98 @@
+<div class="tasks">
+
+  <!-- Header -->
+  <header class="header">
+    <h1>My Tasks</h1>
+    <button class="add-btn" routerLink="/tasks/new">+ Add Task</button>
+  </header>
+
+  <!-- Loading -->
+  <p *ngIf="isLoading" class="info">Loading tasks...</p>
+
+  <!-- Error -->
+  <p *ngIf="error" class="error">{{ error }}</p>
+
+  <!-- ✅ SCROLLABLE TASK LIST -->
+  <div class="task-scroll" *ngIf="tasks.length > 0">
+
+    <div class="task-card" *ngFor="let task of tasks">
+
+      <!-- ================= Parent Task ================= -->
+      <div class="task-header">
+
+        <!-- Dropdown -->
+        <button
+          class="expand-btn"
+          (click)="toggleSubtasks(task.id)"
+        >
+          <span [class.open]="expandedTaskId === task.id">▸</span>
+        </button>
+
+        <!-- Title -->
+        <p
+          class="title"
+          [class.done]="task.completed"
+          [routerLink]="['/tasks', task.id, 'edit']"
+        >
+          {{ task.title }}
+        </p>
+
+        <!-- Edit -->
+        <button class="edit-btn" (click)="confirmDelete(task)">
+          🗑
+        </button>
+
+        <!-- Done -->
+        <label class="checkbox">
+          <input
+            type="checkbox"
+            [checked]="task.completed"
+            (change)="toggleTask(task)"
+          />
+          <span></span>
+        </label>
+      </div>
+
+      <!-- ================= Subtasks ================= -->
+     
+      <div
+        class="subtasks"
+        *ngIf="expandedTaskId === task.id "
+      >
+
+        <div class="" *ngIf="task.subtasks.length === 0">
+             <p class="">No Subtasks added yet. Ask AI to create one.</p>
+        </div>
+        <div class="subtask" *ngFor="let sub of task.subtasks">
+
+          <input
+            type="checkbox"
+            [checked]="sub.completed"
+            (change)="toggleSubtask(sub)"
+          />
+
+          <span class="subtask-title">{{ sub.title }}</span>
+
+          <small class="estimate" *ngIf="sub.estimate">
+            {{ sub.estimate }}
+          </small>
+
+          <button
+            class="subtask-delete"
+            (click)="deleteSubtask(task.id, sub.id)"
+          >
+            🗑
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Empty -->
+  <p class="empty" *ngIf="!isLoading && tasks.length === 0">
+    No tasks found. Add your first one 🚀
+  </p>
+
+</div>
