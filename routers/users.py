@@ -2,30 +2,40 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from fastapi import APIRouter, HTTPException, requests
-from .models import User
+import httpx
+from fastapi import APIRouter, HTTPException
 
-router = APIRouter(
-    prefix = "/users",
-    tags = ["users"]
-)
+from .models import RegisterRequest, LoginRequest, TokenResponse
+from helpers.security import verify_password
+from helpers.jwt_encode import create_access_token, create_refresh_token
 
+DB_SERVICE = os.getenv("DB_SERVICE_URL_LOCAL")
 
-@router.post("/create")
-def create_user(user : User):
-    url = f"http://localhost:5014/create/users"
-    res = requests.post(url , user = user)
-    return {"message" : "User created successfully"}
+router = APIRouter(prefix="/auth", tags=["auth"])
 
-@router.get("/get")
-def get_user(user : User):
-    url = f"http://localhost:5014/search/user"
-    res = requests.post(url , user = user)
-    return {"result" : res}
+@router.post("/register")
+async def register(payload: RegisterRequest):
+    async with httpx.AsyncClient() as client:
+        res = await client.post(f"{DB_SERVICE}/users", json=payload.dict())
+        if res.status_code != 200:
+            raise HTTPException(res.status_code, res.text)
 
-# @router.put("/update")
-# def update_user():
+    return {"message": "User registered successfully"}
 
 
-# @router.delete("/delete")
-# def delete_user():
+@router.post("/login", response_model=TokenResponse)
+async def login(payload: LoginRequest):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{DB_SERVICE}/users/by-email/{payload.email}")
+        if res.status_code != 200:
+            raise HTTPException(401, "Invalid credentials")
+
+        user = res.json()
+
+    if not verify_password(payload.password, user["password"]):
+        raise HTTPException(401, "Invalid credentials")
+
+    return {
+        "access_token": create_access_token(user["id"]),
+        "refresh_token": create_refresh_token(user["id"])
+    }

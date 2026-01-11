@@ -92,37 +92,25 @@
   </div>
 
 
-
-
   <!-- Initial suggestions (only if no AI response yet) -->
-  <div class="suggestions" *ngIf="!isLoading && !aiResponse && suggestions.length > 0" @aiCards>
+  <div class="suggestions" *ngIf="!isLoading && !aiResponse && suggestions.length > 0 && !isThinking" @aiCards>
     <div class="card" *ngFor="let item of suggestions">
       <h4>{{ item.title }}</h4>
       <p>{{ item.reason }}</p>
     </div>
   </div>
 
-  <!-- Empty state -->
-  <p class="empty" *ngIf="!isLoading && !isThinking && !aiResponse && suggestions.length === 0">
-    No suggestions right now ✨
-  </p>
-
-  <!-- ⭐ Starter questions (before any prompt) -->
   <div
-    class="starter-questions"
-    *ngIf="!isLoading && !aiResponse && !isThinking"
-    @fadeUp
+    class="ai-empty"
+    *ngIf="!isLoading && !isThinking && !aiResponse && !error && suggestions.length === 0"
   >
-    <div class="starter-title">Try asking:</div>
-
-    <div class="starter-list">
-      <button
-        class="starter-chip"
-        *ngFor="let q of starterQuestions"
-        (click)="onStarterQuestionClick(q)"
-      >
-        {{ q }}
-      </button>
+    <div class="ai-empty-icon">✨</div>
+    <div class="ai-empty-text">
+      <h4>No suggestions yet</h4>
+      <p>
+        Ask the AI to plan your day, prioritize tasks, or break work into smaller
+        steps. Create your tasks first.
+      </p>
     </div>
   </div>
 
@@ -144,13 +132,31 @@
         </button>
       </div>
     </div>
+  </div>
 
- 
+
+    <!-- ⭐ Starter questions (before any prompt) -->
+  <div
+    class="starter-questions"
+    *ngIf="(!isLoading && !aiResponse && !isThinking && suggestions.length !== 0) || error "
+    @fadeUp
+  >
+    <div class="starter-title">Try asking:</div>
+
+    <div class="starter-list">
+      <button
+        class="starter-chip"
+        *ngFor="let q of starterQuestions"
+        (click)="onStarterQuestionClick(q)"
+      >
+        {{ q }}
+      </button>
+    </div>
   </div>
 
   
    <!-- 🤖 Ask AI input -->
-  <app-ai-ask-input (ask)="onAsk($event)"></app-ai-ask-input>
-
+  <app-ai-ask-input (ask)="onAsk($event)" *ngIf = "tasks.length" [enable] = "false" ></app-ai-ask-input>
+  <app-ai-ask-input (ask)="onAsk($event)" *ngIf = "tasks.length === 0" [enable] = "true" > </app-ai-ask-input>
 
 </aside>

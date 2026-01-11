@@ -1,16 +1,20 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 import logging
 import httpx
 import json
 import requests
-from dotenv import load_dotenv
-load_dotenv()
+from fastapi import APIRouter, Depends
 
-from fastapi import APIRouter
+from helpers.jwt_decode import get_current_user
 from .models import Task, FetchTask, DeleteTask, UpdateTask, GetTask, ToggleTask, ToggleSubtask, DeleteSubtask
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+DB_SERVICE = os.getenv("DB_SERVICE_URL_LOCAL")
 
 router = APIRouter(
     prefix = "/tasks",
@@ -18,11 +22,12 @@ router = APIRouter(
 )
 
 @router.post("/create")
-async def create_tasks(task : Task):
+async def create_tasks(task : Task, user_id=Depends(get_current_user)):
 
-    task.user_id = 1
-    logger.info(f"Task payload = {task}")
-    url = "http://localhost:5014/create/tasks"
+    logger.info("Payload from frontend : ",task)
+    task.user_id = int(user_id)
+    logger.info(f"Current User = {user_id}")
+    url = f"{DB_SERVICE}/create/tasks"
 
     async with httpx.AsyncClient(timeout=5) as client:
         res = await client.post(url, json = task.model_dump(mode="json"))
@@ -31,10 +36,14 @@ async def create_tasks(task : Task):
     return {"message" : "Tasks created successfully"}
 
 
-@router.post("/search")
-async def search_tasks(payload : FetchTask):
+@router.get("/search")
+async def search_tasks(user_id=Depends(get_current_user)):
 
-    url = f"http://localhost:5014/search/userTasks"
+    payload = FetchTask(
+        user_id = int(user_id)
+    )
+
+    url = f"{DB_SERVICE}/search/userTasks"
     
     async with httpx.AsyncClient(timeout=5) as client:
         res = await client.post(url, json = payload.model_dump(mode="json"))
@@ -52,7 +61,7 @@ async def delete_task(payload : DeleteTask):
 
     logger.info(payload)
 
-    url = f"http://localhost:5014/delete/task"
+    url = f"{DB_SERVICE}/delete/task"
 
     async with httpx.AsyncClient() as client:
         res = await client.post(url, json = payload.model_dump(mode="json"))
@@ -67,7 +76,7 @@ async def update_task(payload : UpdateTask):
     
     logger.info(payload)
 
-    url = f"http://localhost:5014/update/task"
+    url = f"{DB_SERVICE}/update/task"
 
     async with httpx.AsyncClient() as client:
         res = await client.put(url, json = payload.model_dump(mode="json"))
@@ -75,13 +84,12 @@ async def update_task(payload : UpdateTask):
     return res.json()
 
 
-
 @router.post("/getTask")
 async def get_task(payload : GetTask):
 
     logger.info(payload)
 
-    url = f"http://localhost:5014/search/task"
+    url = f"{DB_SERVICE}/search/task"
 
     async with httpx.AsyncClient() as client:
         res = await client.post(url, json = payload.model_dump(mode="json"))
@@ -89,11 +97,12 @@ async def get_task(payload : GetTask):
     
     return res.json()
 
+
 @router.put("/toggleTask")
 async def toggle_task(payload : ToggleTask):
     logger.info(payload)
 
-    url = f"http://localhost:5014/update/toggleTask"
+    url = f"{DB_SERVICE}/update/toggleTask"
 
     async with httpx.AsyncClient() as client:
         res = await client.put(url, json = payload.model_dump(mode="json"))
@@ -102,7 +111,7 @@ async def toggle_task(payload : ToggleTask):
 
 @router.get("/{task_id}/subtasks")
 def get_subtasks(task_id: int):
-    url = f"http://localhost:5014/search/tasks/{task_id}/subtasks"
+    url = f"{DB_SERVICE}/search/tasks/{task_id}/subtasks"
     response = requests.get(
         url
     )
@@ -113,7 +122,7 @@ def get_subtasks(task_id: int):
 async def toggle_task(payload : ToggleSubtask):
     logger.info(payload)
 
-    url = f"http://localhost:5014/update/toggleSubtask"
+    url = f"{DB_SERVICE}/update/toggleSubtask"
 
     async with httpx.AsyncClient() as client:
         res = await client.put(url, json = payload.model_dump(mode="json"))
@@ -125,7 +134,7 @@ async def delete_subtask(payload : DeleteSubtask):
 
     logger.info(payload)
 
-    url = f"http://localhost:5014/delete/subtask"
+    url = f"{DB_SERVICE}/delete/subtask"
 
     async with httpx.AsyncClient() as client:
         res = await client.post(url, json = payload.model_dump(mode="json"))

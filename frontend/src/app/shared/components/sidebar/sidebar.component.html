@@ -1,7 +1,20 @@
-<aside class="sidebar">
+<div class="sidebar" [class.collapsed]="collapsed">
+
   <div class="sidebar-header">
-    <span class="title">Menu</span>
+    <span class="title" *ngIf="!collapsed && expanded">Navigation</span>
+
+    <!-- <button class="collapse-btn" (click)="toggle()">
+      {{ collapsed ? '›' : '‹' }}
+    </button> -->
+
+    <div class="collapse-btn"  (click)="toggle()">
+      <span class="chevron" [class.collapsed]="collapsed" >
+      </span>
+    </div>
+
   </div>
+
+  
 
   <nav class="nav">
     <a
@@ -11,7 +24,9 @@
       class="nav-item"
     >
       <span class="icon">{{ item.icon }}</span>
-      <span class="label">{{ item.label }}</span>
+      <span class="label" *ngIf = "expanded">{{ item.label }}</span>
     </a>
   </nav>
-</aside>
+
+</div>
+

@@ -46,6 +46,7 @@ import { TaskStateService } from '../../core/state/task-state.service';
 export class AiPanelComponent implements OnInit{
 
   tasks: any[] = [];
+  context : any[] =  [];
   @ViewChild('aiScroll') aiScroll!: ElementRef<HTMLDivElement>;
 
   mode: 'initial' | 'streaming' = 'initial';
@@ -70,18 +71,22 @@ export class AiPanelComponent implements OnInit{
 
   ngOnInit() {
 
-    this.isThinking = true;
-    this.subtasksCreated = false; 
-    this.error = '';
     this.taskState.tasks$.subscribe(tasks => {
+      this.error = '';
+      this.subtasksCreated = false; 
       this.tasks = tasks;
-
-      // Optional: auto-refresh AI suggestions
       if (this.tasks.length > 0) {
+        this.isThinking = true;
         this.aiResponse = undefined;
-          this.loadInitialSuggestions();
+        this.loadInitialSuggestions();
+      }
+      else if(this.tasks.length === 0){
+        this.isLoading = false;
+        this.isThinking = false;
+        this.suggestions = [];
       }
     });
+
   }
 
   onAsk(prompt: string) {
@@ -94,7 +99,7 @@ export class AiPanelComponent implements OnInit{
     
 
     console.log("Payload sent to LLM OnAsk, ", this.tasks)
-    this.aiService.askAi({prompt,context: 'dashboard',tasks: this.tasks}).subscribe({
+    this.aiService.askAi({prompt,context: this.context,tasks: this.tasks}).subscribe({
         next : res => {
           setTimeout(() => {   // 👈 artificial thinking delay
           this.isThinking = false;
@@ -117,7 +122,7 @@ export class AiPanelComponent implements OnInit{
       this.error = '';
 
     
-        this.aiService.askAi({prompt: question,context: 'dashboard',tasks: this.tasks}).subscribe({
+        this.aiService.askAi({prompt: question,context: this.context,tasks: this.tasks}).subscribe({
           next: (res) => {
           setTimeout(() => {   // 👈 artificial thinking delay
               this.isThinking = false;
@@ -197,7 +202,7 @@ export class AiPanelComponent implements OnInit{
 
     });
 
-    // this.taskState.requestRefresh(); // refresh task list
+    this.taskState.requestRefresh(); // refresh task list
     this.isThinking = false;
 }
 

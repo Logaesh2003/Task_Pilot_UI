@@ -6,7 +6,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { TaskListComponent } from './tasks/task-list/task-list.component';
 import { TaskCreateComponent } from './tasks/task-create/task-create.component';
 import { AppLayoutComponent } from './layout/app-layout.component';
-import { authGuard } from './core/guards/auth.guard';
 import { TaskEditComponent } from './tasks/task-edit/task-edit.component';
 
 export const routes: Routes = [
@@ -24,7 +23,6 @@ export const routes: Routes = [
   {
     path: '',
     component: AppLayoutComponent,
-    canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'tasks', component: TaskListComponent },

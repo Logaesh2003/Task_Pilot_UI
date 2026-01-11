@@ -1,22 +1,31 @@
-import logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 import asyncio
 import time
 import httpx
 import requests
+import logging
+
 
 from fastapi.responses import StreamingResponse
-from fastapi import APIRouter
-from .models import AiAskRequest, AiAskResponse, AiSuggestion, InitialSuggestionRequest, CreateSubtask
+from fastapi import APIRouter, Depends
+from .models import AiAskRequest, AiAskResponse, AiSuggestion, InitialSuggestionRequest, CreateSubtask, AIContextItem
+from helpers import ai_history_service
+from helpers.jwt_decode import get_current_user
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix = "/llm",
     tags = ["llm"]
 )
 
-DB_SERVICE = "http://localhost:5014"
+DB_SERVICE = os.getenv("DB_SERVICE_URL_LOCAL")
+LLM_LOCAL = os.getenv("LLM_LOCAL")
+LLM_PRODUCTION = os.getenv("LLM_PRODUCTION")
 
 @router.post("/initial-suggestions")
 def initial_ai_suggestions(tasks: InitialSuggestionRequest):
@@ -26,7 +35,6 @@ def initial_ai_suggestions(tasks: InitialSuggestionRequest):
 
     logger.info(f"Initial suggestion {tasks}")
 
-    # Rule 1: High priority tasks
     high_priority = [t for t in tasks if t.get("priority") == "High" and not t.get("completed")]
     if high_priority:
         suggestions.append(
@@ -36,7 +44,6 @@ def initial_ai_suggestions(tasks: InitialSuggestionRequest):
             )
         )
 
-    # Rule 2: Tasks due today
     due_today = [t for t in tasks if t.get("due_date")]
     if due_today:
         suggestions.append(
@@ -46,7 +53,7 @@ def initial_ai_suggestions(tasks: InitialSuggestionRequest):
             )
         )
 
-    # Rule 3: No urgent tasks
+
     if not suggestions:
         suggestions.append(
             AiSuggestion(
@@ -60,27 +67,57 @@ def initial_ai_suggestions(tasks: InitialSuggestionRequest):
 
 
 @router.post("/ask")
-async def ask_ai(payload: AiAskRequest):
+async def ask(payload: AiAskRequest, user_id=Depends(get_current_user)):
     tasks = payload.tasks
 
     logger.info(f"ASK AI payload {tasks}")
 
-    # Sort by priority (simple logic)
+    # Sort by priority
     priority_order = {"High": 1, "Medium": 2, "Low": 3}
     sorted_tasks = sorted(
         tasks,
         key=lambda t: priority_order.get(t.priority, 99)
     )
+
+     # Fetch history from DB service
+    history = ai_history_service.get_recent_history(user_id)
+
+    # Build context - validate responses have required fields
+    context = []
+    for h in history:
+        try:
+            response = h.get("response", {})
+            # Only include if response has required AiResponse fields
+            if isinstance(response, dict) and "title" in response and "items" in response and "followUps" in response:
+                context.append(
+                    AIContextItem(
+                        previousAIresponse=response,
+                        prompt=h.get("prompt", "")
+                    )
+                )
+        except Exception as e:
+            logger.warning(f"Skipping invalid history entry: {e}")
+            continue
+
+    url = f"{LLM_LOCAL}/assist"
+
     payload.tasks = sorted_tasks
+    payload.context = context
 
     logger.info(f"Payload before sending it to LLM {payload}")
-
-    url = f"http://localhost:7000/assist"
 
     async with httpx.AsyncClient() as client:
         res = await client.post(url, json = payload.model_dump(mode = "json"))
         response = res.json()
         logger.info("Received response from LLM : {response}")
+
+
+    # Save interaction
+    ai_history_service.save_history({
+        "user_id": user_id,
+        "prompt": payload.prompt,
+        "response": response,
+    })
 
 
     return response
@@ -122,7 +159,6 @@ def replace_subtasks(payload: CreateSubtask):
     return response.json()
 
 
-
 def normalize_tasks(tasks):
     normalized = []
 
@@ -147,5 +183,3 @@ def normalize_tasks(tasks):
             })
 
     return normalized
-
-

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -12,8 +12,10 @@ import { FormsModule } from '@angular/forms';
 export class AiAskInputComponent {
 
   @Output() ask = new EventEmitter<string>();
+  @Input() enable = false;
 
   prompt = '';
+  
   isLoading = false;
 
   submit() {

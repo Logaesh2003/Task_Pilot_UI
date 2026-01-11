@@ -50,7 +50,6 @@ export class DashboardComponent implements OnInit {
 
   findStats(tasks : any){
     
-
     const total = tasks.length;
     const completed = tasks.filter((t:any) => t.completed).length;
     const pending = total - completed;

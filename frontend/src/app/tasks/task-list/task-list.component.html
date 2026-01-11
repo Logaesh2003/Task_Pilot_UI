@@ -60,9 +60,13 @@
         *ngIf="expandedTaskId === task.id "
       >
 
-        <div class="" *ngIf="task.subtasks.length === 0">
-             <p class="">No Subtasks added yet. Ask AI to create one.</p>
+        <div class="no-subtasks" *ngIf="task.subtasks.length === 0">
+          <span class="no-subtasks-icon">🤖</span>
+          <p class="no-subtasks-text">
+            No subtasks added yet. Ask AI to create one.
+          </p>
         </div>
+
         <div class="subtask" *ngFor="let sub of task.subtasks">
 
           <input

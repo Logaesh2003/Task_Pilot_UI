@@ -23,8 +23,7 @@ export class TaskService {
   // GET all tasks for logged-in user
   getTasks(): Observable<any> {
     const url = `${this.API_URL}/search`
-    const payload = {"user_id" : 1}
-    return this.http.post(url, payload,{ headers: { 'Content-Type': 'application/json' } });
+    return this.http.get(url,{ headers: { 'Content-Type': 'application/json' } });
   }
 
   // CREATE task

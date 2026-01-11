@@ -19,7 +19,7 @@
 
     <div class="scroll">
 
-      <div class="task-list">
+      <div class="task-list" *ngIf="todayTasks.length !== 0">
         <div class="task-item" *ngFor="let task of todayTasks">
           <span class="task-title">{{ task.title }}</span>
           <span
@@ -31,12 +31,13 @@
         </div>
       </div>
 
+      <p class="empty" *ngIf="todayTasks.length === 0">
+        No tasks found. Add your first one 🎉
+      </p>
     </div>
 
     
-    <p class="empty" *ngIf="todayTasks.length === 0">
-      No tasks planned for today 🎉
-    </p>
+    
   </section>
 
 </div>

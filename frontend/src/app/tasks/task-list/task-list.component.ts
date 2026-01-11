@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { TaskService } from '../../core/services/task.service';
 import { TaskStateService } from '../../core/state/task-state.service';
 import { Router } from '@angular/router';
-
+import { forkJoin } from 'rxjs';
 
 interface Task {
   id: number;
@@ -38,12 +38,19 @@ export class TaskListComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.taskState.tasks$.subscribe(tasks => {
-      this.tasks = tasks;
-    });
-    // this.taskState.requestRefresh();
-    // this.fetchAllTask();   // ✅ runs on component load
+      this.taskState.tasks$.subscribe(tasks => {
+        this.tasks = tasks
+        console.log("Tasks in ngOnInit : ", this.tasks);
+      }); 
+  
   }
+
+  loadTasks() {
+  this.service.getTasks().subscribe(tasks => {
+    this.taskState.setTasks(tasks);
+  });
+}
+
 
 
   toggleSubtasks(taskId: number) {
@@ -84,22 +91,25 @@ deleteSubtask(taskId: number, subtaskId: number) {
 }
 
   async confirmDelete(task: Task) {
-    // const confirmed = confirm(`Delete task "${task.title} with task_id ${task.id}"?`);
-
-    // if (!confirmed) return;
-
     await this.deleteTask(task.id);
+    
   }
 
 
   deleteTask(taskId: number) {
-    // 🔗 Later: call backend DELETE /tasks/:id
-    this.tasks = this.tasks.filter(task => task.id !== taskId);
-  
+    
     this.service.deleteTask(taskId).subscribe({
       next : res => {
         console.log(res);
         this.taskState.requestRefresh();
+        this.tasks = this.tasks.filter(task => task.id !== taskId);
+        if(this.tasks.length === 0){
+          console.log("Going inside if")
+          this.tasks = [];
+          this.taskState.setTasks(this.tasks);
+          // this.router.navigate(["/tasks"]);
+        }
+
       },
       error : err => console.log(err)
     })
@@ -126,8 +136,21 @@ deleteSubtask(taskId: number, subtaskId: number) {
           };
           this.tasks.push(task);
         });
+        const subtaskCalls = this.tasks.map((t : any) =>
+          this.service.getSubtasks(t.id)
+        );
+  
+        forkJoin(subtaskCalls).subscribe((subtasksList : any) => {
+          const normalized = this.tasks.map((task : any, i : number) => ({
+            ...task,
+            subtasks: subtasksList[i] || []
+          }));
+  
+          this.tasks = normalized;
+        });
         this.isLoading = false;
         console.log(res)
+        this.taskState.requestRefresh();
     },
       error : err => {
         console.log('Error',err)

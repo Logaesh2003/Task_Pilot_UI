@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlmodel import SQLModel, Field
-from typing import Optional, List
-from datetime import date
+from typing import Optional, List, Literal
+from datetime import date, datetime
 
 class User(BaseModel):
     user_name : str
@@ -45,10 +45,26 @@ class TaskContext(BaseModel):
     description: Optional[str] = None
     dueDate: Optional[str] |None
 
+class PlanItem(BaseModel):
+    taskId: Optional[int]
+    title: Optional[str]
+    meta: Optional[str] = None
+
+class AiResponse(BaseModel):
+    type: Optional[str] = "plan"
+    title: Optional[str] = None
+    items: Optional[List[PlanItem]] = None
+    followUps: Optional[List[str]] = None
+
+class AIContextItem(BaseModel):
+    prompt: str
+    previousAIresponse: AiResponse
+    created_at: Optional[datetime] = None
+
 
 class AiAskRequest(BaseModel):
     prompt: str
-    context: str
+    context: List[AIContextItem] = []
     tasks: List[TaskContext]
 
 
@@ -62,6 +78,8 @@ class AiAskResponse(BaseModel):
 
 class InitialSuggestionRequest(BaseModel):
     tasks: List[TaskContext]
+
+
 
 # Subtasks
 
@@ -79,3 +97,18 @@ class subTaskContext(BaseModel):
 class CreateSubtask(BaseModel):
     parentTaskId: Optional[int] | None
     subtasks: List[subTaskContext]
+
+# AUTH Models
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    name: str
+    password: str
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"

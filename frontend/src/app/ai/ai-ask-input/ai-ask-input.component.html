@@ -5,7 +5,7 @@
     [(ngModel)]="prompt"
     placeholder="Ask AI to plan, prioritize, or suggest…"
     (keydown.enter)="submit()"
-    [disabled]="isLoading"
+    [disabled]="enable"
   />
 
   <button

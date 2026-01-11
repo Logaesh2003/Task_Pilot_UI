@@ -53,7 +53,6 @@ export class AiService {
   }
 
 
-
   askAi( payload : any) : Observable<any>{
 
     const url = `${this.API_URL}/ask`
@@ -68,54 +67,6 @@ export class AiService {
         url, payload
     );
  }
-
-
- streamAskAi(
-  payload: {
-    prompt: string;
-    context: string;
-    tasks: any[];
-  },
-  onMessage: (chunk: string) => void,
-  onDone: () => void,
-  onError: () => void
-) {
-  fetch('http://localhost:8000/llm/ask-stream', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  })
-    .then(async response => {
-      const reader = response.body?.getReader();
-      if (!reader) return;
-
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        const text = decoder.decode(value, { stream: true });
-        const lines = text.split('\n');
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const chunk = line.replace('data: ', '').trim();
-            if (chunk === '[DONE]') {
-              onDone();
-              return;
-            }
-            onMessage(chunk);
-          }
-        }
-      }
-    })
-    .catch(() => {
-      onError();
-    });
-}
 
 
 }
