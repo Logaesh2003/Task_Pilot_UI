@@ -13,8 +13,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-DB_SERVICE = os.getenv("DB_SERVICE_URL_LOCAL")
-
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         print("Token received : ",token)

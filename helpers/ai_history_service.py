@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-DB_SERVICE_URL = os.getenv("DB_SERVICE_URL_LOCAL")
+DB_SERVICE_URL = os.getenv("DB_SERVICE_URL_PROD")
 
 
 def get_recent_history(user_id: int, limit: int = 5):

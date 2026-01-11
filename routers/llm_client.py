@@ -23,7 +23,7 @@ router = APIRouter(
     tags = ["llm"]
 )
 
-DB_SERVICE = os.getenv("DB_SERVICE_URL_LOCAL")
+DB_SERVICE = os.getenv("DB_SERVICE_URL_PROD")
 LLM_LOCAL = os.getenv("LLM_LOCAL")
 LLM_PRODUCTION = os.getenv("LLM_PRODUCTION")
 

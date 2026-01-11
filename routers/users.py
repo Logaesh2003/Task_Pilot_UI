@@ -9,7 +9,7 @@ from .models import RegisterRequest, LoginRequest, TokenResponse
 from helpers.security import verify_password
 from helpers.jwt_encode import create_access_token, create_refresh_token
 
-DB_SERVICE = os.getenv("DB_SERVICE_URL_LOCAL")
+DB_SERVICE = os.getenv("DB_SERVICE_URL_PROD")
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

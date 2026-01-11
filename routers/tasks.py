@@ -14,7 +14,7 @@ from .models import Task, FetchTask, DeleteTask, UpdateTask, GetTask, ToggleTask
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-DB_SERVICE = os.getenv("DB_SERVICE_URL_LOCAL")
+DB_SERVICE = os.getenv("DB_SERVICE_URL_PROD")
 
 router = APIRouter(
     prefix = "/tasks",
