@@ -45,10 +45,10 @@ export class AppLayoutComponent {
           const task = {
             id: value[0],
             title: value[2],
-            dueDate: value[3],
-            completed: value[4],
-            description : value[5],
-            priority : value[6]
+            dueDate: value[5],
+            completed: value[6],
+            description : value[3],
+            priority : value[4]
           };
           this.tasks.push(task);
         });
