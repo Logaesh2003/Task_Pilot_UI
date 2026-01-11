@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AiStructuredResponse } from '../ai.models';
+import { environment } from '../../environments/environment';
 
 export interface AiSuggestion {
   title: string;
@@ -13,7 +14,7 @@ export interface AiSuggestion {
 })
 export class AiService {
 
-  private readonly API_URL = 'http://localhost:8000/llm';
+  private readonly API_URL = `${environment.apiURL}/llm`;
 
   constructor(private http: HttpClient) {}
 
