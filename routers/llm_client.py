@@ -24,8 +24,8 @@ router = APIRouter(
 )
 
 DB_SERVICE = os.getenv("DB_SERVICE_URL_PROD")
-LLM_LOCAL = os.getenv("LLM_LOCAL")
-LLM_PRODUCTION = os.getenv("LLM_PRODUCTION")
+LLM_LOCAL = os.getenv("LLM_URL_LOCAL")
+LLM_PRODUCTION = os.getenv("LLM_URL_PRODUCTION")
 
 @router.post("/initial-suggestions")
 def initial_ai_suggestions(tasks: InitialSuggestionRequest):
@@ -99,7 +99,7 @@ async def ask(payload: AiAskRequest, user_id=Depends(get_current_user)):
             logger.warning(f"Skipping invalid history entry: {e}")
             continue
 
-    url = f"{LLM_LOCAL}/assist"
+    url = f"{LLM_PRODUCTION}/assist"
 
     payload.tasks = sorted_tasks
     payload.context = context
