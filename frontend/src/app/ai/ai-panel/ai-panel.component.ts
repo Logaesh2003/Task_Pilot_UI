@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges, HostListener } from
 import { CommonModule } from '@angular/common';
 import {ViewChild, ElementRef, NgZone } from '@angular/core';
 import { filter } from 'rxjs/operators';
+import {ActivatedRoute,Router } from '@angular/router';
 
 import { AiService, AiSuggestion } from '../../core/services/ai.service';
 import { AiAskInputComponent } from '../ai-ask-input/ai-ask-input.component';
@@ -9,6 +10,7 @@ import { AiStructuredResponse } from '../../core/ai.models';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { TaskService } from '../../core/services/task.service';
 import { TaskStateService } from '../../core/state/task-state.service';
+
 
 
 @Component({
@@ -49,6 +51,8 @@ export class AiPanelComponent implements OnInit{
   context : any[] =  [];
   @ViewChild('aiScroll') aiScroll!: ElementRef<HTMLDivElement>;
 
+
+
   expanded = true;
 
   mode: 'initial' | 'streaming' = 'initial';
@@ -66,13 +70,16 @@ export class AiPanelComponent implements OnInit{
     'Can you give a detailed schedule for today?'
   ];
 
-  constructor(private aiService: AiService, private zone: NgZone, private taskService : TaskService, private taskState : TaskStateService) {
+  constructor(private aiService: AiService, private route : ActivatedRoute,private router : Router, private zone: NgZone, private taskService : TaskService, private taskState : TaskStateService) {
     
   }
 
   @HostListener('window:resize')
   handleResize() {
     this.expanded = window.innerWidth > 1024;
+    if(this.expanded){
+      this.router.navigate(['/dashboard']);
+    }
   }
 
 
