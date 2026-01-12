@@ -29,6 +29,6 @@ export class AiAskInputComponent {
     setTimeout(() => {
       this.isLoading = false;
       this.prompt = '';
-    }, 600);
+    }, 2000);
   }
 }

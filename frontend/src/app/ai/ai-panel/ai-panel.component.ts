@@ -105,7 +105,7 @@ export class AiPanelComponent implements OnInit{
           this.isThinking = false;
           this.aiResponse = res;
           this.scrollAfterRender();
-        }, 3000); // 600–900ms is ideal
+        }, 2000); // 600–900ms is ideal
         },
         error: () => {
         this.isThinking = false;
@@ -129,7 +129,7 @@ export class AiPanelComponent implements OnInit{
               this.aiResponse = res;
               console.log("AI Response : ",this.aiResponse)
               this.scrollAfterRender();
-            }, 3000); // 600–900ms is ideal
+            }, 2000); // 600–900ms is ideal
           },
           error: () => {
             this.isThinking = false;
@@ -153,7 +153,7 @@ export class AiPanelComponent implements OnInit{
             this.suggestions = res.suggestions;
             this.isThinking = false;
             this.scrollAfterRender();
-          }, 1000); // 600–900ms is ideal
+          }, 2000); // 600–900ms is ideal
           
         },
         error: () => {

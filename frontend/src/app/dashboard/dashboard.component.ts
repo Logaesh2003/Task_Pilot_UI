@@ -36,10 +36,10 @@ export class DashboardComponent implements OnInit {
       const normalized: any = this.tasks.map((t: any[]) => ({
         id: t[0],
         title: t[2],
-        completed: t[4],
-        dueDate: t[3],
-        description: t[5],
-        priority: t[6]
+        completed: t[6],
+        dueDate: t[5],
+        description: t[3],
+        priority: t[4]
       }));
 
       this.findStats(normalized);
