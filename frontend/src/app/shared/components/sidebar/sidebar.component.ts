@@ -21,6 +21,8 @@ export class SidebarComponent {
     { label: 'Tasks', icon: '✅', route: '/tasks' }
   ];
 
+  aiRoute = "/ai";
+
   collapsed = false;
   expanded = true;
 

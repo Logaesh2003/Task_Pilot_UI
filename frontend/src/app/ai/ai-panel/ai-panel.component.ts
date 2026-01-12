@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {ViewChild, ElementRef, NgZone } from '@angular/core';
 import { filter } from 'rxjs/operators';
@@ -49,6 +49,8 @@ export class AiPanelComponent implements OnInit{
   context : any[] =  [];
   @ViewChild('aiScroll') aiScroll!: ElementRef<HTMLDivElement>;
 
+  expanded = true;
+
   mode: 'initial' | 'streaming' = 'initial';
   aiResponse?: any;
   subtasksCreated = false
@@ -66,6 +68,11 @@ export class AiPanelComponent implements OnInit{
 
   constructor(private aiService: AiService, private zone: NgZone, private taskService : TaskService, private taskState : TaskStateService) {
     
+  }
+
+  @HostListener('window:resize')
+  handleResize() {
+    this.expanded = window.innerWidth > 1024;
   }
 
 

@@ -26,6 +26,16 @@
       <span class="icon">{{ item.icon }}</span>
       <span class="label" *ngIf = "expanded">{{ item.label }}</span>
     </a>
+    <a
+      *ngIf = "!expanded"
+      [routerLink]="aiRoute"
+      routerLinkActive="active"
+      class="nav-item" 
+      
+    >
+      <span class="icon" >🤖</span>
+      <!-- <span class="label" *ngIf = "expanded">Assistant</span> -->
+    </a>
   </nav>
 
 </div>

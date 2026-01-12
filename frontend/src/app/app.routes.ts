@@ -7,6 +7,7 @@ import { TaskListComponent } from './tasks/task-list/task-list.component';
 import { TaskCreateComponent } from './tasks/task-create/task-create.component';
 import { AppLayoutComponent } from './layout/app-layout.component';
 import { TaskEditComponent } from './tasks/task-edit/task-edit.component';
+import { AiPanelComponent } from './ai/ai-panel/ai-panel.component';
 
 export const routes: Routes = [
   //  {
@@ -25,9 +26,11 @@ export const routes: Routes = [
     component: AppLayoutComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'ai', component: AiPanelComponent },
       { path: 'tasks', component: TaskListComponent },
       { path: 'tasks/new', component: TaskCreateComponent },
       { path: 'tasks/:id/edit', component: TaskEditComponent }
+      
     ]
   }
 ];
