@@ -95,9 +95,9 @@ export class TaskEditComponent implements OnInit {
         const result = res.task[0] ?? [];
         
         this.mockTask.title = result[2],
-        this.mockTask.dueDate = result[3],
-        this.mockTask.priority = result[6],
-        this.mockTask.description = result[5]
+        this.mockTask.dueDate = result[5],
+        this.mockTask.priority = result[4],
+        this.mockTask.description = result[3]
 
         this.taskForm.patchValue(this.mockTask)  
 
