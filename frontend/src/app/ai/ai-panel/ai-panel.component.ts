@@ -76,7 +76,7 @@ export class AiPanelComponent implements OnInit{
 
   @HostListener('window:resize')
   handleResize() {
-    this.expanded = window.innerWidth > 1024;
+    this.expanded = window.innerWidth > 900;
     if(this.expanded){
       this.router.navigate(['/dashboard']);
     }
