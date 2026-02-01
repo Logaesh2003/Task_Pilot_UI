@@ -35,7 +35,8 @@ def initial_ai_suggestions(tasks: InitialSuggestionRequest):
 
     logger.info(f"Initial suggestion {tasks}")
 
-    high_priority = [t for t in tasks if t.get("priority") == "High" and not t.get("completed")]
+    todayDate = datetime.date.today().strftime("%Y-%m-%d")  
+    high_priority = [t for t in tasks if t.get("priority") == "High" and not t.get("completed") and t.get("due_date") == todayDate]
     if high_priority:
         suggestions.append(
             AiSuggestion(
@@ -44,12 +45,12 @@ def initial_ai_suggestions(tasks: InitialSuggestionRequest):
             )
         )
 
-    due_today = [t for t in tasks if t.get("due_date")]
+    due_today = [t for t in tasks if t.get("due_date") == todayDate]
     if due_today:
         suggestions.append(
             AiSuggestion(
                 title="Focus on tasks due soon",
-                reason=f"{len(due_today)} task(s) have a due date"
+                reason=f"{len(due_today)} task(s) have a due today"
             )
         )
 

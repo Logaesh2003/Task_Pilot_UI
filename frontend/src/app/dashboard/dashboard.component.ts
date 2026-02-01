@@ -52,9 +52,9 @@ export class DashboardComponent implements OnInit {
   }
 
   findStats(tasks: any) {
-
-    const total = tasks.length;
-    const completed = tasks.filter((t: any) => t.completed).length;
+    const todayDate = new Date().toISOString().split('T')[0];
+    const total = tasks.filter((t: any) => !t.completed && t.dueDate === todayDate).length;
+    const completed = tasks.filter((t: any) => t.completed && t.dueDate === todayDate).length;
     const pending = total - completed;
 
     this.stats = [
