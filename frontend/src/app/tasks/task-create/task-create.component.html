@@ -9,11 +9,7 @@
 
     <div class="field">
       <label>Task Title *</label>
-      <input
-        type="text"
-        formControlName="title"
-        placeholder="e.g. Finish report"
-      />
+      <input type="text" formControlName="title" placeholder="e.g. Finish report" />
       <small *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.invalid">
         Task title is required
       </small>
@@ -21,17 +17,16 @@
 
     <div class="field">
       <label>Description</label>
-      <textarea
-        rows="3"
-        formControlName="description"
-        placeholder="Optional details"
-      ></textarea>
+      <textarea rows="3" formControlName="description" placeholder="Optional details"></textarea>
     </div>
 
     <div class="row">
       <div class="field">
         <label>Due Date</label>
         <input type="date" formControlName="dueDate" />
+        <small *ngIf="!taskForm.get('dueDate')?.touched && taskForm.get('dueDate')?.invalid">
+          Task due date is required
+        </small>
       </div>
 
       <div class="field">

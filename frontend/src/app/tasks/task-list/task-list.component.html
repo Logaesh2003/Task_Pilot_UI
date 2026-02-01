@@ -21,19 +21,12 @@
       <div class="task-header">
 
         <!-- Dropdown -->
-        <button
-          class="expand-btn"
-          (click)="toggleSubtasks(task.id)"
-        >
+        <button class="expand-btn" (click)="toggleSubtasks(task.id)">
           <span [class.open]="expandedTaskId === task.id">▸</span>
         </button>
 
         <!-- Title -->
-        <p
-          class="title"
-          [class.done]="task.completed"
-          [routerLink]="['/tasks', task.id, 'edit']"
-        >
+        <p class="title" [class.done]="task.completed" [routerLink]="['/tasks', task.id, 'edit']">
           {{ task.title }}
         </p>
 
@@ -44,21 +37,14 @@
 
         <!-- Done -->
         <label class="checkbox">
-          <input
-            type="checkbox"
-            [checked]="task.completed"
-            (change)="toggleTask(task)"
-          />
+          <input type="checkbox" [checked]="task.completed" (change)="toggleTask(task)" />
           <span></span>
         </label>
       </div>
 
       <!-- ================= Subtasks ================= -->
-     
-      <div
-        class="subtasks"
-        *ngIf="expandedTaskId === task.id "
-      >
+
+      <div class="subtasks" *ngIf="expandedTaskId === task.id ">
 
         <div class="no-subtasks" *ngIf="task.subtasks.length === 0">
           <span class="no-subtasks-icon">🤖</span>
@@ -69,22 +55,15 @@
 
         <div class="subtask" *ngFor="let sub of task.subtasks">
 
-          <input
-            type="checkbox"
-            [checked]="sub.completed"
-            (change)="toggleSubtask(sub)"
-          />
+          <input type="checkbox" [checked]="sub.completed" (change)="toggleSubtask(task, sub)" />
 
-          <span class="subtask-title">{{ sub.title }}</span>
+          <span class="subtask-title" [class.done]="sub.completed">{{ sub.title }}</span>
 
           <small class="estimate" *ngIf="sub.estimate">
             {{ sub.estimate }}
           </small>
 
-          <button
-            class="subtask-delete"
-            (click)="deleteSubtask(task.id, sub.id)"
-          >
+          <button class="subtask-delete" (click)="deleteSubtask(task.id, sub.id)">
             🗑
           </button>
 

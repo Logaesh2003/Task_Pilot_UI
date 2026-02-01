@@ -9,7 +9,7 @@ import { forkJoin } from 'rxjs';
 interface Task {
   id: number;
   title: string;
-  description : string;
+  description: string;
   completed: boolean;
   due: string;
 }
@@ -27,29 +27,29 @@ export class TaskListComponent implements OnInit {
   service = inject(TaskService)
 
   expandedTaskId: number | null = null;
-  tasks: any[] = [];   
+  tasks: any[] = [];
   isLoading = false;
   error = '';
 
-  constructor(private router : Router, private taskState : TaskStateService){
+  constructor(private router: Router, private taskState: TaskStateService) {
 
   }
 
 
   ngOnInit(): void {
 
-      this.taskState.tasks$.subscribe(tasks => {
-        this.tasks = tasks
-        console.log("Tasks in ngOnInit : ", this.tasks);
-      }); 
-  
+    this.taskState.tasks$.subscribe(tasks => {
+      this.tasks = tasks
+      console.log("Tasks in ngOnInit : ", this.tasks);
+    });
+
   }
 
   loadTasks() {
-  this.service.getTasks().subscribe(tasks => {
-    this.taskState.setTasks(tasks);
-  });
-}
+    this.service.getTasks().subscribe(tasks => {
+      this.taskState.setTasks(tasks);
+    });
+  }
 
 
 
@@ -63,47 +63,53 @@ export class TaskListComponent implements OnInit {
     task.completed = !task.completed;
 
     this.service.toggleTask(task.id).subscribe({
-      next : res =>{
+      next: res => {
         console.log("Task completion status is toggled")
       },
-      error : err => console.log(err)
+      error: err => console.log(err)
     })
   }
 
   /* -------- Subtasks -------- */
 
-toggleSubtask(sub : any) {
-  sub.completed = !sub.completed;
+  toggleSubtask(task: any, sub: any) {
+    sub.completed = !sub.completed;
 
-  this.service.toggleSubtask(sub.id).subscribe({
-    next : () => console.log(`Subtask of id ${sub.id} is toggled`),
-    error : () => console.log(`Error toggling subtask`)
-  });
-}
+    let totalCompletedSubtasks = task.subtasks?.filter((s: any) => s.completed).length;
 
-deleteSubtask(taskId: number, subtaskId: number) {
-  this.service.deleteSubtask(subtaskId).subscribe(() => {
-    const task = this.tasks.find(t => t.id === taskId);
-    task.subtasks = task.subtasks.filter(
-      (s: any) => s.id !== subtaskId
-    );
-  });
-}
+    if (totalCompletedSubtasks === task.subtasks?.length) {
+      this.toggleTask(task);
+    }
+
+    this.service.toggleSubtask(sub.id).subscribe({
+      next: () => console.log(`Subtask of id ${sub.id} is toggled`),
+      error: () => console.log(`Error toggling subtask`)
+    });
+  }
+
+  deleteSubtask(taskId: number, subtaskId: number) {
+    this.service.deleteSubtask(subtaskId).subscribe(() => {
+      const task = this.tasks.find(t => t.id === taskId);
+      task.subtasks = task.subtasks.filter(
+        (s: any) => s.id !== subtaskId
+      );
+    });
+  }
 
   async confirmDelete(task: Task) {
     await this.deleteTask(task.id);
-    
+
   }
 
 
   deleteTask(taskId: number) {
-    
+
     this.service.deleteTask(taskId).subscribe({
-      next : res => {
+      next: res => {
         console.log(res);
         this.taskState.requestRefresh();
         this.tasks = this.tasks.filter(task => task.id !== taskId);
-        if(this.tasks.length === 0){
+        if (this.tasks.length === 0) {
           console.log("Going inside if")
           this.tasks = [];
           this.taskState.setTasks(this.tasks);
@@ -111,7 +117,7 @@ deleteSubtask(taskId: number, subtaskId: number) {
         }
 
       },
-      error : err => console.log(err)
+      error: err => console.log(err)
     })
 
   }
@@ -124,7 +130,7 @@ deleteSubtask(taskId: number, subtaskId: number) {
     this.error = '';
 
     this.service.getTasks().subscribe({
-      next : res => {
+      next: res => {
         const result = res.tasks ?? [];
         result.forEach((value: any[]) => {
           const task = {
@@ -132,33 +138,33 @@ deleteSubtask(taskId: number, subtaskId: number) {
             title: value[2],
             due: value[3],
             completed: value[4],
-            description : value[5]
+            description: value[5]
           };
           this.tasks.push(task);
         });
-        const subtaskCalls = this.tasks.map((t : any) =>
+        const subtaskCalls = this.tasks.map((t: any) =>
           this.service.getSubtasks(t.id)
         );
-  
-        forkJoin(subtaskCalls).subscribe((subtasksList : any) => {
-          const normalized = this.tasks.map((task : any, i : number) => ({
+
+        forkJoin(subtaskCalls).subscribe((subtasksList: any) => {
+          const normalized = this.tasks.map((task: any, i: number) => ({
             ...task,
             subtasks: subtasksList[i] || []
           }));
-  
+
           this.tasks = normalized;
         });
         this.isLoading = false;
         console.log(res)
         this.taskState.requestRefresh();
-    },
-      error : err => {
-        console.log('Error',err)
+      },
+      error: err => {
+        console.log('Error', err)
         this.error = 'Failed to load tasks';
         this.isLoading = false;
       }
     })
-    
+
   }
 
 }

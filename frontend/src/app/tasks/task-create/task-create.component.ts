@@ -24,19 +24,20 @@ export interface Task {
 
 export class TaskCreateComponent {
   isSubmitting = false;
-  taskForm : FormGroup;
+  taskForm: FormGroup;
   service = inject(TaskService)
   error = '';
-  
 
-  constructor(private fb: FormBuilder, private router: Router, private taskState : TaskStateService) {
-      this.taskForm = this.fb.group({
-            title: ['', Validators.required],
-            description: [''],
-            dueDate: [''],
-            priority: ['Medium', Validators.required]
+
+  constructor(private fb: FormBuilder, private router: Router, private taskState: TaskStateService) {
+    this.taskForm = this.fb.group({
+      title: ['', Validators.required],
+      description: [''],
+      dueDate: [`${new Date().toISOString().split('T')[0]}`],
+      priority: ['Medium', Validators.required]
     });
   }
+
 
   async submit() {
     if (this.taskForm.invalid) {
@@ -64,8 +65,8 @@ export class TaskCreateComponent {
   cancel() {
     this.router.navigate(['/tasks']);
   }
-  
-  async createTask(tasks : Task) {
+
+  async createTask(tasks: Task) {
 
     this.service.createTask(tasks).subscribe({
       next: res => {

@@ -14,19 +14,21 @@ import { count, filter } from 'rxjs/operators';
 export class DashboardComponent implements OnInit {
 
   tasks: any[] = [];
-  stats : any[] = [
+  stats: any[] = [
     { label: 'Total Tasks', value: 0 },
     { label: 'Completed', value: 0 },
     { label: 'Pending', value: 0 }
   ];
-  
-  todayTasks : any[] = [];
 
-  constructor(private taskService : TaskService){}
+  todayTasks: any[] = [];
+  dueTasks: any[] = [];
+  activeTab: 'today' | 'due' = 'today';
+
+  constructor(private taskService: TaskService) { }
 
   ngOnInit(): void {
     this.loadTasks();
-    
+
   }
 
   loadTasks() {
@@ -44,14 +46,15 @@ export class DashboardComponent implements OnInit {
 
       this.findStats(normalized);
       this.findTodayTask(normalized);
+      this.findDueTasks(normalized);
       console.log(this.tasks)
     });
   }
 
-  findStats(tasks : any){
-    
+  findStats(tasks: any) {
+
     const total = tasks.length;
-    const completed = tasks.filter((t:any) => t.completed).length;
+    const completed = tasks.filter((t: any) => t.completed).length;
     const pending = total - completed;
 
     this.stats = [
@@ -63,13 +66,27 @@ export class DashboardComponent implements OnInit {
     console.log("stats", this.stats)
   }
 
-  findTodayTask(tasks : any){
+  findTodayTask(tasks: any) {
     const todayDate = new Date().toISOString().split('T')[0];
-    tasks = tasks.filter((t : any) => t.dueDate && t.dueDate <= todayDate && !t.completed )
-    tasks.forEach((task:any) =>{
-      var todayTask = { title : task.title, priority : task.priority }
+    tasks = tasks.filter((t: any) => t.dueDate && t.dueDate === todayDate && !t.completed)
+    tasks.forEach((task: any) => {
+      var todayTask = { title: task.title, priority: task.priority }
       this.todayTasks.push(todayTask)
     })
+  }
+
+  findDueTasks(tasks: any) {
+    const todayDate = new Date().toISOString().split('T')[0];
+
+    // Only show tasks that are overdue (due date is before today and not completed)
+    this.dueTasks = tasks
+      .filter((t: any) => t.dueDate && !t.completed && t.dueDate < todayDate)
+      .map((task: any) => ({
+        title: task.title,
+        priority: task.priority,
+        dueDate: task.dueDate
+      }))
+      .sort((a: any, b: any) => a.dueDate.localeCompare(b.dueDate));
   }
 
 }

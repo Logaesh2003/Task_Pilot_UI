@@ -35,11 +35,9 @@
 
 .stat-card {
   position: relative;
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #f8fafc 100%
-  );
+  background: linear-gradient(180deg,
+      #ffffff 0%,
+      #f8fafc 100%);
   border-radius: 14px;
   padding: 1.3rem 1.4rem;
   box-shadow:
@@ -78,40 +76,89 @@
   bottom: 12px;
   width: 4px;
   border-radius: 4px;
-  background: linear-gradient(
-    180deg,
-    #6366f1,
-    #4f46e5
-  );
+  background: linear-gradient(180deg,
+      #6366f1,
+      #4f46e5);
   opacity: 0.85;
 }
 
-/* ---------------- Today Section ---------------- */
+/* ---------------- Tasks Section with Tabs ---------------- */
 
-.today {
+.tasks-section {
   display: flex;
   flex-direction: column;
 }
 
-
-.today h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
+.tab-header {
+  display: flex;
+  gap: 0.5rem;
   margin-bottom: 1rem;
-  color: #0f172a;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tab-btn:hover {
+  color: #4f46e5;
+}
+
+.tab-btn.active {
+  color: #4f46e5;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1, #4f46e5);
+  border-radius: 2px 2px 0 0;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+}
+
+.badge.warning {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+.tab-content {
+  min-height: 230px;
 }
 
 /* ---------------- Task List ---------------- */
 
 .scroll {
-  height : 230px;
+  height: 230px;
   display: flex;
   flex-direction: column;
 }
 
 .task-list {
   flex: 1;
-  min-height: 0;          // 🔑 CRITICAL
+  min-height: 0; // 🔑 CRITICAL
   overflow-y: auto;
   gap: 0.7rem;
 }
@@ -180,11 +227,9 @@
   text-align: center;
 
   border-radius: 16px;
-  background: linear-gradient(
-    180deg,
-    rgba(99, 102, 241, 0.05),
-    rgba(99, 102, 241, 0.02)
-  );
+  background: linear-gradient(180deg,
+      rgba(99, 102, 241, 0.05),
+      rgba(99, 102, 241, 0.02));
 
   border: 1px dashed #c7d2fe;
 
@@ -226,12 +271,10 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    120deg,
-    rgba(99, 102, 241, 0) 20%,
-    rgba(99, 102, 241, 0.12) 40%,
-    rgba(99, 102, 241, 0) 60%
-  );
+  background: linear-gradient(120deg,
+      rgba(99, 102, 241, 0) 20%,
+      rgba(99, 102, 241, 0.12) 40%,
+      rgba(99, 102, 241, 0) 60%);
   animation: emptyShimmer 3s ease-in-out infinite;
 }
 
@@ -239,9 +282,11 @@
   0% {
     transform: translateX(-100%);
   }
+
   60% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(100%);
   }
@@ -259,4 +304,35 @@
   letter-spacing: 0.08em;
   color: #64748b;
   margin: 1rem 0 0.5rem;
+}
+
+/* ---------------- Due Tasks Section ---------------- */
+
+.due-tasks {
+  display: flex;
+  flex-direction: column;
+}
+
+.due-tasks h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #0f172a;
+}
+
+.task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.due-date {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.due-date.overdue {
+  color: #dc2626;
+  font-weight: 600;
 }
