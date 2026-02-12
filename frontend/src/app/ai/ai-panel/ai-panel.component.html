@@ -1,0 +1,162 @@
+<aside class="ai-panel" *ngIf = "expanded">
+
+  <header class="header">
+    <h3>AI Assistant</h3>
+    <span class="badge">Beta</span>
+  </header>
+
+  <p class="subtitle">
+    Smart suggestions to help you plan better
+  </p>
+
+<!-- 🔽 Scrollable content -->
+  <div class="ai-scroll" #aiScroll>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    Loading…
+  </div>
+
+  <!-- Thinking placeholder -->
+  <div class="ai-thinking" *ngIf="isThinking" @fadeUp>
+    <div class="thinking-avatar">🤖</div>
+
+    <div class="thinking-content">
+      <div class="thinking-title">Thinking…</div>
+      <div class="thinking-text">
+        Analyzing your tasks and priorities
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- AI structured response (highest priority) -->
+  <div class="ai-structured" *ngIf="!isLoading && aiResponse && aiResponse?.type !== 'subtasks'" @aiCards>
+    <h3 class="ai-title">{{ aiResponse.title }}</h3>
+
+    <div class="ai-card" *ngFor="let item of aiResponse.items; let i = index">
+      <div class="ai-index">{{ i + 1 }}</div>
+
+      <div class="ai-content">
+        <div class="ai-item-title">{{ item.title }}</div>
+        <div class="ai-item-meta">{{ item.meta }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 🔥 SUBTASKS SECTION -->
+  <div
+    class="subtasks-panel"
+    *ngIf="aiResponse?.type === 'subtasks' && aiResponse.items?.length"
+  >
+    <div class="subtasks-title">
+      Suggested Subtasks
+    </div>
+
+    <div
+      class="subtask-group"
+      *ngFor="let group of aiResponse.items"
+    >
+      <!-- Parent Task -->
+      <div class="subtask-parent">
+        <span class="parent-dot"></span>
+        {{ group.parentTitle }}
+      </div>
+
+      <!-- Subtask Cards -->
+      <div class="subtask-cards">
+        <div
+          class="subtask-card"
+          *ngFor="let sub of group.subtasks"
+        >
+          <div class="subtask-icon">•</div>
+          <div class="subtask-content">
+            {{ sub.title }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="create-subtasks-btn"
+      (click)="replaceSubtasks()"
+      [disabled]="subtasksCreated"
+    >
+      {{ subtasksCreated ? 'Subtasks created' : 'Create these subtasks' }}
+    </button>
+
+  </div>
+
+
+  <!-- Initial suggestions (only if no AI response yet) -->
+  <div class="suggestions" *ngIf="!isLoading && !aiResponse && suggestions.length > 0 && !isThinking" @aiCards>
+    <div class="card" *ngFor="let item of suggestions">
+      <h4>{{ item.title }}</h4>
+      <p>{{ item.reason }}</p>
+    </div>
+  </div>
+
+  <div
+    class="ai-empty"
+    *ngIf="!isLoading && !isThinking && !aiResponse && !error && suggestions.length === 0"
+  >
+    <div class="ai-empty-icon">✨</div>
+    <div class="ai-empty-text">
+      <h4>No suggestions yet</h4>
+      <p>
+        Ask the AI to plan your day, prioritize tasks, or break work into smaller
+        steps. Create your tasks first.
+      </p>
+    </div>
+  </div>
+
+  
+  <div class="ai-tip" *ngIf="aiResponse && aiResponse.tip">
+    💡 {{ aiResponse.tip }}
+  </div>
+
+  <div class="follow-ups" *ngIf="aiResponse && aiResponse.followUps?.length"  @fadeUp>
+      <p class="follow-up-label">Try asking:</p>
+
+      <div class="follow-up-list">
+        <button
+          class="follow-up-chip"
+          *ngFor="let q of aiResponse.followUps"
+          (click)="onFollowUp(q)"
+        >
+          {{ q }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- ⭐ Starter questions (before any prompt) -->
+  <div
+    class="starter-questions"
+    *ngIf="(!isLoading && !aiResponse && !isThinking && suggestions.length !== 0) || error "
+    @fadeUp
+  >
+    <div class="starter-title">Try asking:</div>
+
+    <div class="starter-list">
+      <button
+        class="starter-chip"
+        *ngFor="let q of starterQuestions"
+        (click)="onStarterQuestionClick(q)"
+      >
+        {{ q }}
+      </button>
+    </div>
+  </div>
+
+  
+   <!-- 🤖 Ask AI input -->
+  <app-ai-ask-input (ask)="onAsk($event)" *ngIf = "tasks.length" [enable] = "false" ></app-ai-ask-input>
+  <app-ai-ask-input (ask)="onAsk($event)" *ngIf = "tasks.length === 0" [enable] = "true" > </app-ai-ask-input>
+
+</aside>

@@ -1,0 +1,22 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#g1)"/>
+
+  <!-- Task check -->
+  <path d="M14 25L20 31L34 17" 
+        stroke="white" 
+        stroke-width="3" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+
+  <!-- Lightning bolt -->
+  <path d="M26 10L18 24H25L22 38L34 20H27L30 10Z" 
+        fill="white" 
+        opacity="0.85"/>
+</svg>

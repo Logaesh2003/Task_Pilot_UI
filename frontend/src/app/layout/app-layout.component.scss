@@ -1,0 +1,23 @@
+
+
+.layout {
+  display: flex;
+  height: 100vh;        // NOT 100vh
+  overflow: hidden;
+}
+
+
+
+/* Main content scrolls independently */
+.content {
+  flex: 1;
+  overflow-y: auto;   // ✅ main dashboard scrolls
+  padding: 24px;
+}
+
+/* AI panel already scroll-controlled */
+app-ai-panel {
+  
+  flex-shrink: 0;
+  height: 100%;
+}

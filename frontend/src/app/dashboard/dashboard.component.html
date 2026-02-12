@@ -1,0 +1,74 @@
+<div class="dashboard">
+
+  <section class="header">
+    <h1>Today’s Overview</h1>
+    <p class="subtitle">Here’s a quick snapshot of your tasks</p>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stat-card" *ngFor="let stat of stats">
+      <p class="stat-label">{{ stat.label }}</p>
+      <p class="stat-value">{{ stat.value }}</p>
+    </div>
+  </section>
+
+  <!-- Tasks Section with Tabs -->
+  <section class="tasks-section">
+
+    <!-- Toggle Tabs -->
+    <div class="tab-header">
+      <button class="tab-btn" [class.active]="activeTab === 'today'" (click)="activeTab = 'today'">
+        Today's Focus
+        <span class="badge" *ngIf="todayTasks.length > 0">{{ todayTasks.length }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'due'" (click)="activeTab = 'due'">
+        Due Tasks
+        <span class="badge warning" *ngIf="dueTasks.length > 0">{{ dueTasks.length }}</span>
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+
+      <!-- Today's Tasks -->
+      <div class="scroll" *ngIf="activeTab === 'today'">
+        <div class="task-list" *ngIf="todayTasks.length !== 0">
+          <div class="task-item" *ngFor="let task of todayTasks">
+            <span class="task-title">{{ task.title }}</span>
+            <span class="priority" [ngClass]="task.priority.toLowerCase()">
+              {{ task.priority }}
+            </span>
+          </div>
+        </div>
+
+        <p class="empty" *ngIf="todayTasks.length === 0">
+          No tasks for today. Enjoy your day! 🎉
+        </p>
+      </div>
+
+      <!-- Due Tasks (Overdue) -->
+      <div class="scroll" *ngIf="activeTab === 'due'">
+        <div class="task-list" *ngIf="dueTasks.length !== 0">
+          <div class="task-item overdue" *ngFor="let task of dueTasks">
+            <div class="task-info">
+              <span class="task-title">{{ task.title }}</span>
+              <span class="due-date overdue">
+                Due: {{ task.dueDate }}
+              </span>
+            </div>
+            <span class="priority" [ngClass]="task.priority.toLowerCase()">
+              {{ task.priority }}
+            </span>
+          </div>
+        </div>
+
+        <p class="empty" *ngIf="dueTasks.length === 0">
+          No overdue tasks. You're all caught up! ✨
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+</div>

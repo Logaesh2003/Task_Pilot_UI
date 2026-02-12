@@ -1,0 +1,12 @@
+fastapi
+sse_starlette
+uvicorn
+sqlmodel
+dotenv
+httpx
+requests
+python-jose[cryptography]
+passlib
+pydantic[email]
+argon2-cffi
+aiofiles
